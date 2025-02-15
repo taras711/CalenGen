@@ -235,12 +235,12 @@
 
 /* Для ночной смены */
 .night-week {
-  border-bottom:1px solid rgb(255, 174, 0);
+  border-bottom:1px solid rgb(0, 0, 0);
 }
 
 /* Для дневной смены */
 .day-week {
-  border-bottom:1px solid black;
+  border-bottom:1px solid orange;
 }
 
 /* Для послеобеденной смены */
