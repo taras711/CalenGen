@@ -12,9 +12,9 @@
         "label": "My menu",
         "setList" : [
             [ 
-                ["home", "Javascript", "This is a sample body text."],
-                ["person", "Java", "This is a sample body text."],
-                ["settings", "Python", "This is a sample body text."]
+                ["date_range", "Calendar", "This is a sample body text."],
+                ["settings", "Settings", "This is a sample body text."],
+                ["note_add", "Other page", "This is a sample body text."]
             ]
         ],
 

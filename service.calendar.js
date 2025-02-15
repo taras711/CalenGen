@@ -42,14 +42,12 @@ class Cal {
     let set;
     this.weekCounter = 0; // Глобальный счетчик недели
     this.lastShift = {};
-    this.lastWeekType = "";
+    this.lastWeekType = {};
     this.settings = set = $.extend({
       block: ".calen", // default block
       worktime: 8, // default worktime in hours
       mode: 'short-long-mode', // default working mode
       weekSequence: 1, // shedule sequence
-      nightDaySequence: 1, // cycle sequence night-day
-      dayAfterMoonNightSequence: 3, // cycle sequence day-aftermoon-night
       currPeriodWeek: 0, // week counter for current period
       worktime: 8, // default worktime in hours
       firstShortLongWeekOfMonth: 0, // Starting week of the year from which the cycle begins: 0 - long, 1 - short
@@ -58,20 +56,24 @@ class Cal {
       modes: {
         'short-long-mode': {
           sequence: ['short', 'long'], // shedule sequence
-          cycleLength: 1, // cycle length
+          cycleLength: 2, // cycle length
+          dayNightSequence: 1, // cycle length
           days: {
             short: [0, 1, 4, 5, 6], // monday, tuesday, friday, saturday, sunday
             long: [2, 3], // wednesday, thursday
           },
+          types: ['day', 'night'], // shedule types
         },
         'day-aftermoon-night': {
           sequence: ['day', 'aftermoon', 'night'], // shedule sequence
-          cycleLength: 3, // cycle length
+          cycleLength: 1, // cycle length
+          dayNightSequence: 1, // cycle length
           days: {
             day: [0, 1, 2, 3, 4], // monday, tuesday, wednesday, thursday, friday
-            aftermoon: [5, 6], // saturday, sunday
-            night: [], // No days for night shifts in this mode
+            aftermoon: [0, 1, 2, 3, 4], // saturday, sunday
+            night: [0, 1, 2, 3, 4], // No days for night shifts in this mode
           },
+          types: ['day', 'aftermoon', 'night'], // shedule types
         },
         // Add more modes here
       }
@@ -260,24 +262,20 @@ class Cal {
   * @returns {string} - An HTML string representing the calendar table for the month.
   */
   showMonth(y, m) {
-    alert("lastWeekCounter = " + this.lastWeekCounter);
     var output = "", // HTML output
         i = 1, // Day counter (1-31)
         dow, // Day of the week
-        weekType, // Week type
-        weekCounter, // Week counter
         current = new Date(), // Current date
         addclass = "today", // Class for the current day
         block = '<td class="%class%">%date%</td>', // HTML template for a day cell
         firstDayOfMonth = new Date(y, m, 7).getDay(), // Day of the week for the first day of the month
         lastDateOfMonth = new Date(y, m + 1, 0).getDate(), // Last day of the month
         lastDayOfLastMonth = (m == 0 ? new Date(y - 1, 12, 0).getDate() : new Date(y, m, 0).getDate()), // Last day of the previous month or current month
-        currentWeekType = this.lastWeekType || 'night'; // Начинаем с последней смены
+        currentWeekType; // Начинаем с последней смены
     
     const shiftsForMonth = this.shiftScheduler().getShiftsForMonth(y, m, this.lastWeekCounter); // Get shifts for the month
     this.lastWeekCounter = shiftsForMonth.week; // Сохраняем последнюю неделю
     
-    const week = shiftsForMonth.week; // Get the week number
     const modeConfig = this.settings.modes[this.settings.mode]; // Get the mode configuration
     const availableShifts = modeConfig.sequence; // Get the available shifts for the current mode
     
@@ -285,35 +283,27 @@ class Cal {
     output = '<table border="0" cellspacing="0" cellpadding="0" class="w-calendar">';
     output += '<thead><tr></tr></thead>';
     
-    // Starting week counter (week number)
-    //if(this.lastWeekCounter === undefined) this.lastWeekCounter = week;
-    if(this.weekCounter === undefined) {
-      
-    }
-    if (firstDayOfMonth !== 1) {
       let prevMonth = m === 0 ? 11 : m - 1;
       let prevYear = m === 0 ? y - 1 : y;
-      weekCounter = shiftsForMonth.week;
-      
-    } else {
-      weekCounter = 0;
-    }
+      let currentKey = `${y}-${m}`; // Current key
+      let prevKey = `${prevYear}-${prevMonth}`; // Previous key
+      let typeWeekIndex; // Shift index
 
-    //currentWeekType = this.getWeekType(this.weekCounter);
-
-    // Calculate the starting week counter
-    //weekCounter = this.lastWeekCounter;
+      if(this.lastWeekType[prevKey] !== undefined) typeWeekIndex = this.lastWeekType[prevKey];
+      else typeWeekIndex = 0;
 
     do {
       // Get the day of the week
       dow = new Date(y, m, i).getDay();
 
       // Get the week type
-      weekType = this.getWeekType(weekCounter + (dow === 1 ? 1 : 0));
+      //weekType = this.getWeekType(weekCounter + (dow === 1 ? 1 : 0));
 
       if (dow === 1 || i === 1) {
-        if (dow === 1) weekCounter++; // Increment week number at the start of Monday
-        currentWeekType = this.getWeekType(weekCounter); // Set the current week type
+        if (dow === 1){
+           typeWeekIndex++; // Increment week number at the start of Monday
+        }
+        currentWeekType = this.getWeekType(typeWeekIndex); // Set the current week type
         output += '<tr>';
         if (i === 1) {
           // If the day is the first day of the month
@@ -351,8 +341,8 @@ class Cal {
       i++;
     } while (i <= lastDateOfMonth); // Loop until the end of the month
 
-    this.lastWeekCounter = weekCounter; // Save the week counter
-    this.lastWeekType = currentWeekType; // Save the current week type
+    this.lastWeekType[currentKey] = typeWeekIndex; // Save the week counter
+    //this.lastWeekType = currentWeekType; // Save the current week type
     output += '</table>';
     return output; // Return the HTML output
   }
@@ -431,20 +421,21 @@ class Cal {
   }
 
   /**
-   * Computes the type of the week (night or day) based on the week number.
+   * Returns the week type for the given week number.
    * 
-   * The week type is determined by the week number and the cycle length of the
-   * week type. The cycle length is determined by the `nightDaySequence` setting.
-   * The week type is determined by taking the week number modulo the cycle length.
-   * If the result is 0, the week type is 'night', otherwise it is 'day'.
-   * @param {number} weekNumber - The week number.
-   * @returns {string} The week type ('night' or 'day').
+   * Week type is determined by the mode configuration, which includes the cycle length,
+   * day-night sequence and the types of shifts in the cycle.
+   * The week type is computed by dividing the week number by the cycle length and
+   * taking the remainder as the index of the type in the types array.
+   * @param {number} weekNumber - The week number for which the week type is to be determined.
+   * @returns {string} The week type.
    */
   getWeekType(weekNumber) {
-    const cycleLength = this.settings.nightDaySequence * 2;
-    const weekCycleIndex = Math.floor(weekNumber / cycleLength) % 2;
-  
-    return weekCycleIndex === 0 ? 'night' : 'day';
+    const modeConfig = this.settings.modes[this.settings.mode]; // Current mode configuration
+    const cycleLength = modeConfig.dayNightSequence * modeConfig.cycleLength; // Cycle length
+    const weekTypes = modeConfig.types; // Types of shifts
+    const weekCycleIndex = Math.floor(weekNumber / cycleLength) % weekTypes.length; // Week type
+    return weekTypes[weekCycleIndex]; // Return the week type [day, night, ...]
   }
 
 
