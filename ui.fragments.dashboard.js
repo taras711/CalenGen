@@ -22,18 +22,7 @@ class Dashboard extends AppObject {
 
             this.header();
             
-            // let text = view.createComponent("h1", {
-            //     id: "MyId",
-            //     content: "<span>My Text</span>",
-            //     parent: view.queryComponent(lay),
-            //     parentType: "object",
-            //     attributes: {
-            //         style: "border-bottom: 2px solid green;",
-            //         "data-action": true
-            //     }
-            // });
             this.calendarBlock = ui.addLayout(this.lay, "linear", "fillx, hcenter, top");
-           // alert(view.queryComponent(this.calendarBlock).id)
             try{
                 let cal = this.cal = new Cal({ block: view.queryComponent(this.calendarBlock) });
                 let h_title = this.h_title;
@@ -69,29 +58,6 @@ class Dashboard extends AppObject {
             }catch(e){
                 alert(e)
             }
-            //calendar.block = view.queryComponent(this.calendarBlock);
-           // calendar.init();
-           // view.implementStyle(text, {background:"blue"});
-            //calendar.action(function(dd){
-                //dd = dd.split("-")
-                //$("#d9 span").text(dd[0])
-                //$("#d10 span").text(`${calendar.arr.longMonth[dd[1]]} ${dd[2]}`);
-                //calendar.nextMonth()
-            //});
-            
-            /*window.onload = function () {
-  
-  var c = new Cal({ block: ".w-calendar" });
-    let slider = $(".slider").verticalSlider({
-    activeSlider: 1
-  });
-
-  $(".slider").on("onSlideFinish", function(e, i){
-    let slideId = i.slideId;
-    alert($(".slider").children().eq(slideId).data("month"))
-  })
-}*/
-            
         }
         
         //Show the page.
@@ -99,7 +65,6 @@ class Dashboard extends AppObject {
     }
 
     header( title, description ) {
-        //let _divider = this.divider();
         
             if(!this.h_section){
                   this.h_section = ui.addLayout(this.lay, "linear", "fillxy, left, bottom");
