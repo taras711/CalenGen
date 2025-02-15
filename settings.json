@@ -1,0 +1,15 @@
+{
+    "security.workspace.trust.untrustedFiles": "open",
+    "workbench.colorTheme": "Expo Light",
+    "workbench.iconTheme": "material-icon-theme",
+    "sqlite3-editor.telemetry": "allow",
+    "sqlite3-editor.ui.tableSelector.displayColumns": true,
+    "sqlite3-editor.ui.tableSelector.displayShadowTables": true,
+    "git.autofetch": true,
+    "editor.unicodeHighlight.nonBasicASCII": false,
+    "editor.unicodeHighlight.invisibleCharacters": false,
+    "alva.model": "code-davinci-002",
+    "[javascript]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features"
+    }
+}

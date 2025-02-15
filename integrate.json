@@ -1,0 +1,26 @@
+{
+    "Controller": {
+        "service": "Service/service.class.js",
+        "constructor": "Service/Controller/constructor.js"
+    },
+    "Modules": {
+        "qr": "Service/Modules/jquery.js",
+        "slider": "plugin.slider.js"
+    },
+    "Ui": {
+        "Fragments": {
+            "settings": "Ui/Fragments/settings.js",
+            "listevents": "Ui/Fragments/listevents.js",
+            "event": "Ui/Fragments/event.js",
+            "statistic": "Ui/Fragments/statistic.js",
+            "calendar": "Ui/Fragments/calendar.js"
+        }
+    },
+    "Model": {
+        "cursor": "Service/Model/cursor.class.js",
+        "migrate": "Service/Model/migrate.json"
+    },
+    "Design": {
+        "app": "app.css"
+    }
+}

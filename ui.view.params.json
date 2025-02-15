@@ -1,0 +1,44 @@
+{
+    
+    "d0": {
+        "setChildMargins": [0.02, 0.02, 0.02, 0.02]
+    },
+
+    "d1": {
+        "backColor": "rgb(54, 84, 129)"
+    },
+
+    "d4": {
+        "label": "My menu",
+        "setList" : [
+            [ 
+                ["home", "Javascript", "This is a sample body text."],
+                ["person", "Java", "This is a sample body text."],
+                ["settings", "Python", "This is a sample body text."]
+            ]
+        ],
+
+        "cornerRadius": 12
+    },
+
+    "d6": {
+        "setChildMargins": [0.05, 0.05, 0.05, 0.05]
+    },
+
+    "d7": {
+        "setSize": [1, 0.35],
+        "backColor": "rgb(54, 84, 129)"
+    },
+
+    "d8": {
+        "margins": [0.035],
+        "childTextColor": "white"
+    },
+
+    "d9": {
+    },
+    
+    "d11": {
+        "setSize": [1, 0.5]
+    }
+}
